@@ -5,17 +5,19 @@ export default function Footer() {
           {/* Logo and Navigation Links */}
           <div className="flex flex-col items-center md:flex-row md:justify-between pl-6">
             <div className="pr-6 flex items-center space-x-4">
-              <img
-                src="/logo.png"
-                alt="EcoBin Logo"
-                className="h-12 w-32" 
-              />
-            </div>
-  
+            <a href="/">
+      <img
+        src="/logo.png"
+        alt="EcoBin Logo"
+        className="h-12 w-32 cursor-pointer" 
+      />
+    </a>
+  </div>
+          
             <nav className="mt-6 md:mt-0">
               <ul className="flex space-x-10 text-lg pr-6">
                 <li>
-                  <a href="" className="hover:underline">
+                  <a href="/" className="hover:underline">
                     Home
                   </a>
                 </li>

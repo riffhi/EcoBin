@@ -60,15 +60,17 @@ export default function Home() {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-2xl bg-[#FDF2D6]">
-      <Card className="shadow-lg rounded-xl bg-[#FFF9E5]">
-        <CardHeader>
-          <CardTitle className="text-black">Waste Classification Analysis</CardTitle>
+    <div className="container mx-auto px-4 py-6 max-w-4xl min-h-screen">
+      <Card className="shadow-lg rounded-xl bg-white">
+        <CardHeader className="px-6 py-4">
+          <CardTitle className="text-black text-xl font-semibold">
+            Waste Classification Analysis
+          </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
+        <CardContent className="px-6 py-4">
+          <div className="space-y-6">
             {/* File Upload Section */}
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-500 transition-colors duration-300">
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-green-500 transition-colors duration-300">
               <input
                 type="file"
                 onChange={handleFileChange}
@@ -86,7 +88,7 @@ export default function Home() {
                 </span>
               </label>
             </div>
-
+  
             {/* Image Preview */}
             {imagePreview && (
               <div className="mt-4">
@@ -97,42 +99,42 @@ export default function Home() {
                 />
               </div>
             )}
-
+  
             {/* Analysis Button */}
             <button
               onClick={handleSubmit}
               disabled={loading || !imageFile}
-              className="w-full bg-green-600 text-white p-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 transition-colors duration-300"
+              className="w-full bg-green-700 text-white py-3 rounded-lg hover:bg-green-600 disabled:bg-gray-400 transition-colors duration-300 font-medium"
             >
               {loading ? 'Analyzing...' : 'Analyze Waste'}
             </button>
-
+  
             {/* Error Display */}
             {error && (
               <Alert variant="destructive" className="bg-red-100 border-red-400 text-red-700">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-
+  
             {/* Results Display */}
             {result && (
               <div className="mt-4 p-4 bg-[#E6FFE6] border-l-4 border-green-400 rounded-lg space-y-4">
                 <h3 className="font-semibold text-lg text-green-800">Analysis Results</h3>
-
+  
                 <div className="space-y-1">
                   <h4 className="font-medium">Description:</h4>
                   <p className="text-green-900 whitespace-pre-wrap">
                     {result.description}
                   </p>
                 </div>
-
+  
                 <div className="space-y-1">
                   <h4 className="font-medium">Waste Category:</h4>
                   <p className="text-green-900">
                     {result.category}
                   </p>
                 </div>
-
+  
                 <div className="space-y-1">
                   <h4 className="font-medium">Confidence Level:</h4>
                   <p className="text-green-900">
@@ -146,4 +148,6 @@ export default function Home() {
       </Card>
     </div>
   );
+  
+  
 }
