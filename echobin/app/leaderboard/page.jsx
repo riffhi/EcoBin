@@ -9,7 +9,7 @@ export default function Leaderboard() {
   ];
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#FDF2D6]">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#023838]">
       <div className="bg-white rounded-lg shadow-lg p-6 w-[600px]">
         <h2 className="text-2xl font-bold mb-4 text-center text-[#000000]">Leaderboard</h2>
         <div className="bg-[#008000] text-white rounded-t-lg p-4 flex items-center justify-between">
@@ -66,9 +66,7 @@ export default function Leaderboard() {
           </tbody>
         </table>
         <div className="flex justify-center mt-4">
-          <button className="bg-[#008000] text-white px-4 py-2 rounded hover:bg-[#005500] transition">
-            Submit
-          </button>
+          
         </div>
       </div>
     </div>

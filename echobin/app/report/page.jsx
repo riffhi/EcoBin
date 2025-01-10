@@ -102,7 +102,7 @@ export default function ReportUncleanAreas() {
       style={{ backgroundColor: '#F8E7A2' }}
     >
       <div
-        className="p-6 rounded-lg shadow-lg"
+        className="p-8 rounded-lg shadow-2xl w-full max-w-md"
         style={{
           width: '400px',
           border: '2px solid #0B5394',
@@ -117,7 +117,7 @@ export default function ReportUncleanAreas() {
             marginBottom: '5px',
           }}
         >
-          REPORT UNCLEAN AREAS
+          Report Unclean Areas
         </h2>
         <p
           className="text-center"
@@ -128,8 +128,9 @@ export default function ReportUncleanAreas() {
           }}
         >
           See something messy? Let us know!
+          See something messy? Let us know!
         </p>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <div>
             <label
               className="block text-center mb-2"
@@ -153,7 +154,13 @@ export default function ReportUncleanAreas() {
               }}
             />
           </div>
+
           <div>
+            <label
+              className="block text-sm font-semibold text-gray-800 mb-2"
+            >
+              Add Location
+            </label>
             <input
               ref={inputRef}
               type="text"

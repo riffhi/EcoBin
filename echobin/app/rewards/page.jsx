@@ -2,10 +2,10 @@
 import React from "react";
 
 export default function Rewards() {
-  const rewardPoints = 0; // Replace this value with dynamic data if needed
+  const rewardPoints = 0;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#FDF2D6]">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#023838]">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
         <h2 className="text-xl font-bold mb-4 text-center text-[#000000]">Rewards</h2>
         <div className="bg-[#FFF9E5] p-4 rounded-lg border border-[#D6D6D6]">
