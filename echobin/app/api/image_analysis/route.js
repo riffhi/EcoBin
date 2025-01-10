@@ -96,20 +96,20 @@ function analyzeWasteDescription(description) {
 
 
   // Non-waste keywords to exclude
-  const nonWasteKeywords = [
-    'surface', 'table', 'desk', 'furniture', 'working', 
-    'in use', 'using', 'functional', 'active', 'clean'
-  ];
-  // Check if description contains non-waste keywords
-  const isNonWaste = nonWasteKeywords.some(keyword => 
-    description.toLowerCase().includes(keyword.toLowerCase())
-  );
-  if (isNonWaste) {
-    return {
-      wasteCategory: 'Not Waste',
-      confidence: 'High'
-    };
-  }
+  // const nonWasteKeywords = [
+  //   'surface', 'table', 'desk', 'furniture', 'working', 
+  //   'in use', 'using', 'functional', 'active', 'clean'
+  // ];
+  // // Check if description contains non-waste keywords
+  // const isNonWaste = nonWasteKeywords.some(keyword => 
+  //   description.toLowerCase().includes(keyword.toLowerCase())
+  // );
+  // if (isNonWaste) {
+  //   return {
+  //     wasteCategory: 'Not Waste',
+  //     confidence: 'High'
+  //   };
+  // }
 
   let categoryScores = {
     biodegradable: 0,
