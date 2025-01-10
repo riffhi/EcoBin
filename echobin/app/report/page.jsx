@@ -18,7 +18,7 @@ export default function ReportUncleanAreas() {
   return (
     <div
       className="flex items-center justify-center min-h-screen"
-      style={{ backgroundColor: "#1E4F39" }}
+      style={{ backgroundColor: "#023838" }}
     >
       <div
         className="p-6 rounded-lg shadow-lg"
@@ -105,3 +105,4 @@ export default function ReportUncleanAreas() {
     </div>
   );
 }
+
