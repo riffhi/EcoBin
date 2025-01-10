@@ -6,19 +6,17 @@ export default function Navbar() {
       <div className="container mx-auto flex justify-between items-center px-8">
         {/* Logo Section */}
         <div className="flex items-center">
-          <img 
-            src="/logo.png" 
-            alt="EcoBin Logo" 
-            className="h-12 w-32 mr-3" // Adjusted size for the logo
-          />
-          {/* <div className="text-2xl font-bold tracking-wide">
-            EcoBin
-          </div> */}
+          <Link href="/">
+            <img 
+              src="/logo.png" 
+              alt="EcoBin Logo" 
+              className="h-12 w-32 mr-3 cursor-pointer" // Adjusted size and added cursor pointer
+            />
+          </Link>
         </div>
 
         {/* Navigation Links */}
         <ul className="flex space-x-8 text-lg font-medium">
-          {/* <li><Link href="/">Home</Link></li> */}
           <li><Link href="/classify">Classify</Link></li>
           <li><Link href="/report">Report</Link></li>
           <li><Link href="/rewards">Reward</Link></li>
