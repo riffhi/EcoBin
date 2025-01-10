@@ -10,11 +10,14 @@ export const metadata = {
 export default function RootLayout({children}) {
   return (
     <html lang="en">
+      <script async defer
+        src="https://maps.gomaps.pro/maps/api/js?key=AlzaSyH3Kb2Q6xXY05X1F-PeIoXOlmiU1dPI-Ha&libraries=geometry,places&callback=initMap">
+    </script>
       <body>
         <Navbar />
         <main>{children}</main>
         <Footer />
       </body>
-    </html>
-  );
+   </html>
+ );
 }
