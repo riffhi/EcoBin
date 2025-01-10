@@ -21,7 +21,7 @@ export default function Navbar() {
           <li><Link href="/report">Report</Link></li>
           <li><Link href="/rewards">Reward</Link></li>
           <li><Link href="/leaderboard">Leaderboard</Link></li>
-          <li><Link href="/collaboration">Collaboration</Link></li>
+          <li><Link href="https://forms.gle/v6LuJQdsMTzuG8iw6">Collaboration</Link></li>
           <li><Link href="/blog">Blog</Link></li>
           <li><Link href="/news">News</Link></li>
         </ul>
