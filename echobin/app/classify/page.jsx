@@ -16,7 +16,7 @@ export default function Home() {
     if (file) {
       setImageFile(file);
       setError(null);
-      
+
       // Create image preview
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -36,12 +36,6 @@ export default function Home() {
     setError(null);
 
     try {
-      // console.log('Starting image upload...', {
-      //   fileName: imageFile.name,
-      //   fileType: imageFile.type,
-      //   fileSize: imageFile.size
-      // });
-
       const formData = new FormData();
       formData.append('image', imageFile);
 
@@ -50,10 +44,7 @@ export default function Home() {
         body: formData,
       });
 
-      // console.log('Response status:', response.status);
-      
       const data = await response.json();
-      // console.log('Response data:', data);
 
       if (!response.ok) {
         throw new Error(data.error || 'Analysis failed. Please try again.');
@@ -69,15 +60,15 @@ export default function Home() {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-2xl">
-      <Card>
+    <div className="container mx-auto p-4 max-w-2xl bg-[#FDF2D6]">
+      <Card className="shadow-lg rounded-xl bg-[#FFF9E5]">
         <CardHeader>
-          <CardTitle>Waste Classification Analysis</CardTitle>
+          <CardTitle className="text-black">Waste Classification Analysis</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {/* File Upload Section */}
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-500 transition-colors duration-300">
               <input
                 type="file"
                 onChange={handleFileChange}
@@ -102,7 +93,7 @@ export default function Home() {
                 <img
                   src={imagePreview}
                   alt="Preview"
-                  className="max-h-64 mx-auto rounded-lg"
+                  className="max-h-64 mx-auto rounded-lg shadow-md"
                 />
               </div>
             )}
@@ -111,47 +102,46 @@ export default function Home() {
             <button
               onClick={handleSubmit}
               disabled={loading || !imageFile}
-              className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
+              className="w-full bg-green-600 text-white p-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 transition-colors duration-300"
             >
-              Analyze Waste
+              {loading ? 'Analyzing...' : 'Analyze Waste'}
             </button>
 
-             {/* Error Display */}
+            {/* Error Display */}
             {error && (
-              <Alert variant="destructive">
+              <Alert variant="destructive" className="bg-red-100 border-red-400 text-red-700">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
-            )} 
+            )}
 
             {/* Results Display */}
             {result && (
-              <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
-              <h3 className="font-semibold text-lg">Analysis Results</h3>
-              
-              <div className="space-y-1">
-                <h4 className="font-medium">Description:</h4>
-                <p className="text-blue-700 whitespace-pre-wrap">
-                  {result.description}
-                </p>
-              </div>
+              <div className="mt-4 p-4 bg-[#E6FFE6] border-l-4 border-green-400 rounded-lg space-y-4">
+                <h3 className="font-semibold text-lg text-green-800">Analysis Results</h3>
 
-              <div className="space-y-1">
-                <h4 className="font-medium">Waste Category:</h4>
-                <p className="text-blue-700">
-                    {result.category}
-                </p>
-              </div>
-
-              <div className="space-y-1">
-                <h4 className="font-medium">Confidence Level:</h4>
-                <p className="text-blue-700">
-                    {result.confidence}
-                </p>
+                <div className="space-y-1">
+                  <h4 className="font-medium">Description:</h4>
+                  <p className="text-green-900 whitespace-pre-wrap">
+                    {result.description}
+                  </p>
                 </div>
-                
-            </div>
-          )}
-        </div>
+
+                <div className="space-y-1">
+                  <h4 className="font-medium">Waste Category:</h4>
+                  <p className="text-green-900">
+                    {result.category}
+                  </p>
+                </div>
+
+                <div className="space-y-1">
+                  <h4 className="font-medium">Confidence Level:</h4>
+                  <p className="text-green-900">
+                    {result.confidence}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>
