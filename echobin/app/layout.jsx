@@ -1,6 +1,8 @@
 import Navbar from './bars/navbar';
 import Footer from './bars/footer';
 import './globals.css';
+import AuthProvider from "@/providers/authproviders";
+import NavbarWrapper from "@/components/navbar";
 
 export const metadata = {
   title: 'EcoBin - Revolutionizing Waste Management',
@@ -11,10 +13,14 @@ export default function RootLayout({children}) {
   return (
     <html lang="en">
       <body>
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+        {/* <Navbar /> */}
+        {/* <main>{children}</main> */}
+
+        <AuthProvider>
+          <NavbarWrapper>{children}</NavbarWrapper>
+        </AuthProvider>
+        {/* <Footer /> */}
       </body>
-</html>
+   </html>
 );
 }
