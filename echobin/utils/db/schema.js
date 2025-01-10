@@ -2,7 +2,7 @@
 // import { User } from 'lucide-react'
 
 // //here pgTable is a function that takes two arguments, table name and schema
-// export const Users = pgTable('users',{
+// export const Users = pgTable('Users',{
 //     id: serial('id').primaryKey(),
 //     email: varchar('email',{length:255}).notNull().unique(),
 //     name: varchar('name',{length:255}).notNull(),
@@ -72,7 +72,7 @@
  
 // export const Blogs = pgTable('blogs',{
 //     id: serial('id').primaryKey(),
-//     userId: integer('user_id').references(() => users.id),
+//     userId: integer('user_id').references(() => Users.id),
 //     title: varchar('title',{length:255}).notNull(),
 //     content: text('content').notNull(),
 //     imageUrl: varchar('image_url',{length:1024}).notNull(),
@@ -86,7 +86,7 @@
 import { pgTable, serial, text, integer, timestamp, boolean, varchar } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
-export const users = pgTable('users', {
+export const Users = pgTable('Users', {
     id: serial('id').primaryKey(),
     email: varchar('email', { length: 255 }).notNull().unique(),
     name: varchar('name', { length: 255 }).notNull(),
@@ -97,7 +97,7 @@ export const users = pgTable('users', {
 
 export const Reports = pgTable('reports', {
     id: serial('id').primaryKey(),
-    userId: integer('user_id').notNull().references(() => users.id),
+    userId: integer('user_id').notNull().references(() => Users.id),
     location: text('location').notNull(),
     imageUrl: varchar('image_url', { length: 255 }).notNull(),
     status: varchar('status', { length: 255 }).notNull().default('pending'),
@@ -106,7 +106,7 @@ export const Reports = pgTable('reports', {
 
 export const Rewards = pgTable('rewards', {
     id: serial('id').primaryKey(),
-    userId: integer('user_id').notNull().references(() => users.id),
+    userId: integer('user_id').notNull().references(() => Users.id),
     points: integer('points').notNull(),
     createdAt: timestamp('created_at').notNull().default('now()'),
     updatedAt: timestamp('updated_at').notNull().default('now()'),
@@ -118,7 +118,7 @@ export const Rewards = pgTable('rewards', {
 
 export const Transactions = pgTable('transactions', {
     id: serial('id').primaryKey(),
-    userId: integer('user_id').notNull().references(() => users.id),
+    userId: integer('user_id').notNull().references(() => Users.id),
     type: varchar('type', { length: 255 }).notNull(),
     amount: integer('amount').notNull(),
     description: text('description').notNull(),
@@ -129,7 +129,7 @@ export const Transactions = pgTable('transactions', {
 
 export const Notifications = pgTable('notifications', {
     id: serial('id').primaryKey(),
-    userId: integer('user_id').notNull().references(() => users.id),
+    userId: integer('user_id').notNull().references(() => Users.id),
     message: text('message').notNull(),
     type: varchar('type', { length: 255 }).notNull(),
     isRead: boolean('is_read').notNull().default(false),
@@ -137,14 +137,14 @@ export const Notifications = pgTable('notifications', {
 });
 export const Blogs = pgTable('blogs',{
     id: serial('id').primaryKey(),
-    userId: integer('user_id').references(() => users.id),
+    userId: integer('user_id').references(() => Users.id),
     title: varchar('title',{length:255}).notNull(),
     content: text('content').notNull(),
     imageUrl: varchar('image_url',{length:1024}).notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const UsersRelations = relations(Users, ({ many }) => ({
     blogs: many(Blogs),
     reports: many(Reports), 
     rewards: many(Rewards),
@@ -153,30 +153,30 @@ export const usersRelations = relations(users, ({ many }) => ({
 }));
 
 export const blogsRelations = relations(Blogs, ({ one }) => ({
-    author: one(users, {
+    author: one(Users, {
         fields: [Blogs.userId],
-        references: [users.id],
+        references: [Users.id],
     }),
 }));
 
 export const reportsRelations = relations(Reports, ({ one }) => ({
-    user: one(users, {
+    user: one(Users, {
         fields: [Reports.userId],
-        references: [users.id],
+        references: [Users.id],
     }),
 }));
 
 export const rewardsRelations = relations(Rewards, ({ one }) => ({
-    user: one(users, {
+    user: one(Users, {
         fields: [Rewards.userId],
-        references: [users.id],
+        references: [Users.id],
     }),
 }));
 
 export const transactionsRelations = relations(Transactions, ({ one }) => ({
-    user: one(users, {
+    user: one(Users, {
         fields: [Transactions.userId],
-        references: [users.id],
+        references: [Users.id],
     }),
     reward: one(Rewards, {
         fields: [Transactions.rewardId],
@@ -185,9 +185,9 @@ export const transactionsRelations = relations(Transactions, ({ one }) => ({
 }));
 
 export const notificationsRelations = relations(Notifications, ({ one }) => ({
-    user: one(users, {
+    user: one(Users, {
         fields: [Notifications.userId],
-        references: [users.id],
+        references: [Users.id],
     }),
 }));
 
