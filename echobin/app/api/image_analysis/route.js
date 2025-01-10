@@ -34,8 +34,8 @@ export async function POST(req) {
     // Create new FormData for Worqhat API
     const worqhatFormData = new FormData();
     worqhatFormData.append('output_type', 'text');
-    worqhatFormData.append('training_data', 'Analyze this image and identify any waste materials present.');
-    worqhatFormData.append('question', 'What types of waste materials are visible in this image?');
+    worqhatFormData.append('training_data', 'Analyze this image and identify if there are any waste materials present. If no waste is visible, clearly state that.');
+    worqhatFormData.append('question', 'Are there any waste materials visible in this image? If yes, what types? If no, clearly state that no waste is present.');
     worqhatFormData.append('images', image, image.name); // Added filename
     worqhatFormData.append('randomness', '0.3');
 
@@ -62,6 +62,7 @@ export async function POST(req) {
     // console.log('Received response from Worqhat:', analysisResult);
     // Extract the description from the data field
     const description = analysisResult.data || 'No description available';
+
     const { wasteCategory, confidence } = analyzeWasteDescription(description);
 
     return NextResponse.json({
@@ -79,92 +80,11 @@ export async function POST(req) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function analyzeWasteDescription(description) {
   // Keywords for each category
   const categories = {
     biodegradable: [
-      'food', 'organic', 'vegetable', 'fruit', 'plant', 'wood', 'leaves', 'grass', 'garden', 'compost', 'banana', 'apple', 'potato',
-      'egg shells', 'food scraps', 'vegetable scraps', 'fruit scraps', 'compost'
+      'food', 'organic', 'vegetable', 'fruit', 'plant', 'leaves', 'grass', 'garden', 'compost', 'banana', 'apple', 'potato', 'egg shells', 'food scraps', 'vegetable scraps', 'fruit scraps', 'compost'
     ],
     recyclable: [
       'plastic', 'metal', 'aluminum', 'glass', 'cardboard', 'paper','bottle', 'can', 'container', 'packaging'
@@ -173,6 +93,23 @@ function analyzeWasteDescription(description) {
       'chemical', 'battery', 'electronic', 'paint', 'oil', 'medical', 'toxic', 'hazardous', 'e-waste', 'pharmaceutical'
     ]
   };
+
+
+  // Non-waste keywords to exclude
+  const nonWasteKeywords = [
+    'surface', 'table', 'desk', 'furniture', 'working', 
+    'in use', 'using', 'functional', 'active', 'clean'
+  ];
+  // Check if description contains non-waste keywords
+  const isNonWaste = nonWasteKeywords.some(keyword => 
+    description.toLowerCase().includes(keyword.toLowerCase())
+  );
+  if (isNonWaste) {
+    return {
+      wasteCategory: 'Not Waste',
+      confidence: 'High'
+    };
+  }
 
   let categoryScores = {
     biodegradable: 0,
