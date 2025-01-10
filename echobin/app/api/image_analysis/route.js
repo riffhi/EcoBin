@@ -84,13 +84,13 @@ function analyzeWasteDescription(description) {
   // Keywords for each category
   const categories = {
     biodegradable: [
-      'food', 'organic', 'vegetable', 'fruit', 'plant', 'leaves', 'grass', 'garden', 'compost', 'banana', 'apple', 'potato', 'egg shells', 'food scraps', 'vegetable scraps', 'fruit scraps', 'compost'
+      'food', 'organic', 'vegetable', 'fruit', 'plant', 'leaves', 'grass', 'garden', 'compost', 'banana', 'apple', 'potato', 'egg shells', 'food scraps', 'vegetable scraps', 'fruit scraps', 'compost', 'fruit peels', 'eat'
     ],
     recyclable: [
       'plastic', 'metal', 'aluminum', 'glass', 'cardboard', 'paper','bottle', 'can', 'container', 'packaging'
     ],
     hazardous: [
-      'chemical', 'battery', 'electronic', 'paint', 'oil', 'medical', 'toxic', 'hazardous', 'e-waste', 'pharmaceutical'
+      'chemical', 'battery', 'electronic', 'paint', 'oil', 'medical', 'toxic', 'hazardous', 'e-waste', 'pharmaceutical', 'light bulbs', 'batteries', 'electronics'
     ]
   };
 
