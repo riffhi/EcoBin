@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import SearchBox from "../../components/searchBox";
 import Maps from "../../components/mapComp";
 import { Card, CardContent } from "@/components/ui/card";
+import { useSession } from "next-auth/react";
+import { incrementUserPoints } from "@/utils/db/action";
 
 export default function map() {
   const [selectPosition, setSelectPosition] = useState(null);
@@ -10,6 +12,9 @@ export default function map() {
   const [description, setDescription] = useState('');
   const [reports, setReports] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [email, setEmail] = useState(null);
+  const { data: session } = useSession();
+
 
   useEffect(() => {
     const savedReports = localStorage.getItem('mapReports');
@@ -17,6 +22,13 @@ export default function map() {
       setReports(JSON.parse(savedReports));
     }
   }, []);
+
+  useEffect(() => {
+    if (session) {
+      setEmail(session.user.email);
+    }
+  }, [session]);
+
 
   const compressImage = (file) => {
     return new Promise((resolve) => {
@@ -86,6 +98,7 @@ export default function map() {
         setDescription('');
         setSelectPosition(null);
         setShowForm(false);
+        await incrementUserPoints(email, 10);
       }
     } catch (error) {
       console.error('Error processing image:', error);

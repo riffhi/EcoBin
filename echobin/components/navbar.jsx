@@ -29,9 +29,9 @@ const Navbar = () => {
           <li>
             <Link href="/report">Report</Link>
           </li>
-          <li>
-            <Link href="/rewards">Reward</Link>
-          </li>
+          {session && (<li>
+              <Link href="/rewards">Reward</Link>
+            </li>)}
           <li>
             <Link href="/leaderboard">Leaderboard</Link>
           </li>
