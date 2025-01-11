@@ -18,7 +18,6 @@ export default function map() {
     }
   }, []);
 
-  // Function to compress image
   const compressImage = (file) => {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -26,12 +25,9 @@ export default function map() {
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          
-          // Calculate new dimensions (max width/height of 800px)
           let width = img.width;
           let height = img.height;
           const maxSize = 800;
-          
           if (width > height && width > maxSize) {
             height = (height * maxSize) / width;
             width = maxSize;
@@ -39,14 +35,10 @@ export default function map() {
             width = (width * maxSize) / height;
             height = maxSize;
           }
-          
           canvas.width = width;
           canvas.height = height;
-          
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
-          
-          // Compress to JPEG with 0.7 quality
           const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
           resolve(compressedBase64);
         };
@@ -56,7 +48,6 @@ export default function map() {
     });
   };
 
-  // Function to safely store in localStorage
   const safelyStoreReports = (updatedReports) => {
     try {
       const serializedData = JSON.stringify(updatedReports);
@@ -80,9 +71,7 @@ export default function map() {
     }
 
     try {
-      // Compress the image
       const compressedImage = await compressImage(image);
-      
       const newReport = {
         id: Date.now(),
         position: selectPosition,
@@ -90,14 +79,9 @@ export default function map() {
         description,
         locationName: selectPosition.display_name
       };
-
       const updatedReports = [...reports, newReport];
-      
-      // Try to store the reports
       if (safelyStoreReports(updatedReports)) {
         setReports(updatedReports);
-        
-        // Reset form
         setImage(null);
         setDescription('');
         setSelectPosition(null);
@@ -109,7 +93,6 @@ export default function map() {
     }
   };
 
-  // Function to delete a report
   const handleDeleteReport = (reportId) => {
     const updatedReports = reports.filter(report => report.id !== reportId);
     if (safelyStoreReports(updatedReports)) {
@@ -118,51 +101,52 @@ export default function map() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen p-4 gap-4">
+    <div className="flex flex-col min-h-screen p-6 gap-6 bg-[#0D3B3F] text-white">
       {/* Form Section */}
       <div className="w-full">
         <button 
           onClick={() => setShowForm(!showForm)}
-          className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="mb-4 px-4 py-2 bg-[#3DC9B0] text-white rounded-full hover:bg-[#33A794] transition"
         >
           {showForm ? 'Hide Form' : 'Add New Report'}
         </button>
 
         {showForm && (
-          <Card className="mb-4">
-            <CardContent className="p-4">
-              <form onSubmit={handleSubmit} className="space-y-4">
+          <Card className="mb-4 bg-[#124B4D] text-white rounded-lg shadow-md">
+            <CardContent className="p-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block mb-2">Location</label>
+                  <label className="block mb-2 font-semibold">Location</label>
                   <SearchBox 
                     selectPosition={selectPosition} 
                     setSelectPosition={setSelectPosition}
+                    className="w-full"
                   />
                 </div>
                 
                 <div>
-                  <label className="block mb-2">Image</label>
+                  <label className="block mb-2 font-semibold">Image</label>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={(e) => setImage(e.target.files[0])}
-                    className="w-full"
+                    className="w-full px-4 py-2 border border-dashed border-[#3DC9B0] rounded-lg bg-[#0D3B3F] text-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block mb-2">Description</label>
+                  <label className="block mb-2 font-semibold">Description</label>
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full p-2 border rounded"
-                    rows="3"
+                    className="w-full p-4 border border-dashed border-[#3DC9B0] rounded-lg bg-[#0D3B3F] text-white"
+                    rows="4"
                   />
                 </div>
 
                 <button 
                   type="submit"
-                  className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                  className="w-full px-6 py-3 bg-[#3DC9B0] text-white rounded-full hover:bg-[#33A794] transition"
                 >
                   Submit Report
                 </button>
@@ -173,27 +157,27 @@ export default function map() {
       </div>
 
       {/* Map Section */}
-      <div className="w-full h-[400px] border rounded-lg overflow-hidden">
+      <div className="w-full h-[400px] border border-dashed border-[#3DC9B0] rounded-lg overflow-hidden">
         <Maps selectPosition={selectPosition} reports={reports} />
       </div>
 
       {/* Reports Section */}
       <div className="w-full">
-        <h2 className="text-xl font-bold mb-4">Saved Reports</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <h2 className="text-2xl font-bold mb-6">Saved Reports</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {reports.map((report) => (
-            <Card key={report.id} className="h-full relative">
+            <Card key={report.id} className="h-full bg-[#124B4D] text-white rounded-lg shadow-md relative">
               <CardContent className="p-4">
                 <img 
                   src={report.image} 
                   alt="Report" 
-                  className="w-full h-48 object-cover rounded mb-2"
+                  className="w-full h-48 object-cover rounded-lg mb-4"
                 />
                 <p className="font-bold">Location: {report.locationName}</p>
                 <p className="mt-2">{report.description}</p>
                 <button
                   onClick={() => handleDeleteReport(report.id)}
-                  className="absolute top-2 right-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                  className="absolute top-4 right-4 px-3 py-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition"
                 >
                   Delete
                 </button>
