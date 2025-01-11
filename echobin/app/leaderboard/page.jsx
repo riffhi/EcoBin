@@ -1,12 +1,41 @@
 'use client';
 import React from "react";
+import { getRanking } from "@/utils/db/action";
+import { useState, useEffect } from "react";
 
 export default function Leaderboard() {
-  const topPerformers = [
-    { rank: 1, user: "John Doe", points: 1200, level: "Gold" },
-    { rank: 2, user: "Jane Smith", points: 1100, level: "Silver" },
-    { rank: 3, user: "Sam Wilson", points: 1000, level: "Bronze" },
-  ];
+  const [rankings, setRankings] = useState([]);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isMounted) {
+      getRanking().then((data) => {
+        // Sort rankings by points in descending order
+        const sortedRankings = data.sort((a, b) => b.points - a.points);
+        
+        // Add rank to each user
+        const rankedRankings = sortedRankings.map((user, index) => ({
+          ...user,
+          rank: index + 1,
+          level: determineLevel(user.points)
+        }));
+
+        setRankings(rankedRankings);
+      });
+    }
+  }, [isMounted]);
+
+  // Function to determine user level based on points
+  const determineLevel = (points) => {
+    if (points >= 40) return "Gold";
+    if (points >= 20) return "Silver";
+    if (points >= 10) return "Bronze";
+    return "Beginner";
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-[#023838]">
@@ -55,19 +84,19 @@ export default function Leaderboard() {
             </tr>
           </thead>
           <tbody>
-            {topPerformers.map((performer) => (
-              <tr key={performer.rank} className="hover:bg-[#F9F9F9]">
+            {rankings.map((performer) => (
+              <tr key={performer.id} className="hover:bg-[#F9F9F9]">
                 <td className="py-2 px-4 border-b">{performer.rank}</td>
-                <td className="py-2 px-4 border-b">{performer.user}</td>
+                <td className="py-2 px-4 border-b flex items-center">
+                  
+                  {performer.name}
+                </td>
                 <td className="py-2 px-4 border-b">{performer.points}</td>
                 <td className="py-2 px-4 border-b">{performer.level}</td>
               </tr>
             ))}
           </tbody>
         </table>
-        <div className="flex justify-center mt-4">
-          
-        </div>
       </div>
     </div>
   );

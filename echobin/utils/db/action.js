@@ -4,6 +4,8 @@ import {db} from './dbconfig';
 import {Users} from './schema';
 import {Reports} from './schema';
 import {eg,sql,and,desc} from 'drizzle-orm'
+// import { desc } from 'drizzle-orm';
+
 
 export async function createUser(email, name,image){
     try{
@@ -101,7 +103,7 @@ export const createReport = async (email, location, imageURL) => {
 
   console.log("User found:", user);
 
-  const userID = user.id; // Assuming 'id' is the column for user ID
+  const userID = user[0].id; // Assuming 'id' is the column for user ID
 
   // Creating the report
   try {
@@ -120,11 +122,19 @@ export const createReport = async (email, location, imageURL) => {
   }
 };
 
-export const incrementUserPoints = async (userId, points) => {
-  console.log("Incrementing points for userId:", userId, "Points:", points);
+export const incrementUserPoints = async (email, points) => {
+  console.log("Incrementing points for user:", email, points);
+  const user = await getUserByEmail(email);
+  if (!user) {
+    console.error("User not found");
+    return;
+  }
 
+  console.log("User found:", user);
+
+  const userID = user[0].id;
   // Fetch current user points
-  const user = await db.select().from(Users).where(Users.id.equals(userId)).limit(1);
+  // const founduser = await db.select().from(Users).where(eq(Users.id, userID)).limit(1);
   if (!user || user.length === 0) {
     console.error("User not found for points update");
     return;
@@ -135,8 +145,13 @@ export const incrementUserPoints = async (userId, points) => {
 
   // Update the user's points
   try {
-    await db.update(Users).set({ points: updatedPoints }).where(Users.id.equals(userId)).execute();
+    console.log("Updating user points to:", updatedPoints, "for user:", userID);
+    await db.update(Users)
+  .set({ points: updatedPoints })
+  .where(eq(Users.id, userID));
+
     console.log("User points updated to:", updatedPoints);
+  
   } catch (error) {
     console.error("Error updating user points:", error);
   }
@@ -147,8 +162,10 @@ export const getRanking = async () => {
   console.log("Fetching user ranking");
 
   // Fetch users by points in descending order
-  const users = await db.select().from(Users).orderBy(Users.points, desc()).execute();
+  const users = await db.select().from(Users).orderBy(desc(Users.points));
+  console.log("Users by ranking:", users);
   return users;
+
 };
 
 
