@@ -136,7 +136,7 @@ const NavbarWrapper = ({ children }) => {
   return (
     <div className="flex h-full w-full flex-col bg-background">
       <Navbar />
-      <main className="h-full w-full pt-16">{children}</main>
+      <main className="h-full w-full">{children}</main>
     </div>
   );
 };
