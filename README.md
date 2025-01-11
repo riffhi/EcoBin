@@ -1,7 +1,7 @@
 # Waste Management Solution
 
 ## Overview
-This repository contains the source code for a waste management solution aimed at supporting the Swachh Bharat Mission (SBM). The application addresses challenges in waste segregation, collection optimization, and citizen engagement. It includes features such as waste categorization tools, efficient collection route suggestions, a reporting system for unclean areas, leaderboards, and blogs to promote sustainability awareness.
+This repository contains the source code for a waste management solution aimed at supporting the Swachh Bharat Mission (SBM). The application addresses challenges in waste segregation, collection optimization, and citizen engagement. It includes features such as waste categorization tools, a reporting system for unclean areas, leaderboards, and blogs to promote sustainability awareness.
 
 ## Features
 
@@ -9,7 +9,7 @@ This repository contains the source code for a waste management solution aimed a
 1. **Waste Segregation Tools:**
    - Allows users to record and categorize waste types (biodegradable, recyclable, hazardous).
 2. **Collection Optimization:**
-   - Provides optimized routes for waste collection to municipalities or NGOs.
+   - Collaborates with municipalities, NGOs, etc. for waste collection.
 3. **Citizen Engagement:**
    - Reporting system to upload images and pinpoint waste locations on a map.
    - Gamified leaderboards and reward systems to encourage active participation.
@@ -28,7 +28,6 @@ This repository contains the source code for a waste management solution aimed a
 ### Additional Tools and Libraries
 - **Mapping:** Integration with mapping APIs (e.g., Google Maps, OpenStreetMap).
 - **Authentication:** Auth mechanism (e.g., JWT, OAuth).
-- **State Management:** (e.g., Redux, Context API, or any other library used).
 
 ## Installation
 
