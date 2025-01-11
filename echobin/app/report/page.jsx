@@ -1,206 +1,197 @@
-'use client';
-import React, { useEffect, useRef, useState } from 'react';
+'use client'
+import React, { useState, useEffect } from "react";
+import SearchBox from "../../components/searchBox";
+import Maps from "../../components/mapComp";
+import { Card, CardContent } from "@/components/ui/card";
 
-export default function ReportUncleanAreas() {
-  const [file, setFile] = useState(null);
-  const [location, setLocation] = useState('');
+export default function map() {
+  const [selectPosition, setSelectPosition] = useState(null);
+  const [image, setImage] = useState(null);
+  const [description, setDescription] = useState('');
   const [reports, setReports] = useState([]);
-  const mapRef = useRef(null);
-  const inputRef = useRef(null);
-  const mapInstance = useRef(null);
-  const markers = useRef([]);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
-    const savedReports = localStorage.getItem('reports');
+    const savedReports = localStorage.getItem('mapReports');
     if (savedReports) {
       setReports(JSON.parse(savedReports));
     }
   }, []);
 
-  // Initialize Google Maps and Autocomplete
-  useEffect(() => {
-    const initMap = () => {
-      mapInstance.current = new google.maps.Map(mapRef.current, {
-        center: { lat: 19.2183, lng: 72.9781 },
-        zoom: 13,
-      });
-
-      const autocomplete = new google.maps.places.Autocomplete(inputRef.current);
-      autocomplete.bindTo('bounds', mapInstance.current);
-
-      autocomplete.addListener('place_changed', () => {
-        const place = autocomplete.getPlace();
-        if (place.geometry && place.geometry.location) {
-          setLocation(place);
-        }
-      });
-
-      // Load existing markers from localStorage
-      reports.forEach((report) => addMarkerToMap(report));
-    };
-
-    if (typeof google !== 'undefined' && google.maps) {
-      initMap();
-    } else {
-      console.error('Google Maps API not loaded.');
-    }
-  }, []);
-
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!location.geometry) {
-      alert('Please select a valid location from the suggestions.');
-      return;
-    }
-
-    if (!file) {
-      alert('Please upload an image.');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const newReport = {
-        location: location.geometry.location.toJSON(),
-        placeName: location.name,
-        image: reader.result,
+  const compressImage = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxSize = 800;
+          if (width > height && width > maxSize) {
+            height = (height * maxSize) / width;
+            width = maxSize;
+          } else if (height > maxSize) {
+            width = (width * maxSize) / height;
+            height = maxSize;
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          resolve(compressedBase64);
+        };
+        img.src = event.target.result;
       };
-
-      const updatedReports = [...reports, newReport];
-      setReports(updatedReports);
-      // localStorage.setItem('reports', JSON.stringify(updatedReports));
-
-      addMarkerToMap(newReport);
-      setFile(null);
-      setLocation('');
-    };
-    reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
+    });
   };
 
-  const addMarkerToMap = (report) => {
-    const marker = new google.maps.Marker({
-      position: report.location,
-      map: mapInstance.current,
-    });
+  const safelyStoreReports = (updatedReports) => {
+    try {
+      const serializedData = JSON.stringify(updatedReports);
+      localStorage.setItem('mapReports', serializedData);
+      return true;
+    } catch (error) {
+      if (error.name === 'QuotaExceededError' || error.code === 22) {
+        alert('Storage full! Please delete some old reports first.');
+      } else {
+        alert('Error saving report. Please try again.');
+      }
+      return false;
+    }
+  };
 
-    const infoWindow = new google.maps.InfoWindow({
-      content: `<strong>${report.placeName}</strong><br><img src="${report.image}" alt="Reported Image" style="max-width: 100px;">`,
-    });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectPosition || !image) {
+      alert('Please select both location and image');
+      return;
+    }
 
-    marker.addListener('click', () => infoWindow.open(mapInstance.current, marker));
-    markers.current.push(marker);
+    try {
+      const compressedImage = await compressImage(image);
+      const newReport = {
+        id: Date.now(),
+        position: selectPosition,
+        image: compressedImage,
+        description,
+        locationName: selectPosition.display_name
+      };
+      const updatedReports = [...reports, newReport];
+      if (safelyStoreReports(updatedReports)) {
+        setReports(updatedReports);
+        setImage(null);
+        setDescription('');
+        setSelectPosition(null);
+        setShowForm(false);
+      }
+    } catch (error) {
+      console.error('Error processing image:', error);
+      alert('Error processing image. Please try again.');
+    }
+  };
+
+  const handleDeleteReport = (reportId) => {
+    const updatedReports = reports.filter(report => report.id !== reportId);
+    if (safelyStoreReports(updatedReports)) {
+      setReports(updatedReports);
+    }
   };
 
   return (
-    <div
-      className="flex flex-col items-center justify-center min-h-screen"
-      style={{ backgroundColor: '#F8E7A2' }}
-    >
-      <div
-        className="p-8 rounded-lg shadow-2xl w-full max-w-md"
-        style={{
-          width: '400px',
-          border: '2px solid #0B5394',
-          backgroundColor: '#FDF3CC',
-        }}
-      >
-        <h2
-          className="text-center font-bold"
-          style={{
-            fontSize: '18px',
-            color: '#000000',
-            marginBottom: '5px',
-          }}
+    <div className="flex flex-col min-h-screen p-6 gap-6" style={{ backgroundColor: '#023838', color: 'white' }}>
+      {/* Form Section */}
+      <div className="w-full">
+        <button 
+          onClick={() => setShowForm(!showForm)}
+          className="mb-4 px-4 py-2 bg-[#3DC9B0] text-white rounded-full hover:bg-[#33A794] transition"
         >
-          Report Unclean Areas
-        </h2>
-        <p
-          className="text-center"
-          style={{
-            fontSize: '12px',
-            color: '#000000',
-            marginBottom: '15px',
-          }}
-        >
-          See something messy? Let us know!
-          See something messy? Let us know!
-        </p>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          <div>
-            <label
-              className="block text-center mb-2"
-              style={{
-                fontSize: '14px',
-                fontWeight: 'bold',
-                color: '#000000',
-              }}
-            >
-              Upload Waste Image
-            </label>
-            <input
-              type="file"
-              accept=".png,.jpg,.jpeg"
-              onChange={handleFileChange}
-              className="w-full px-3 py-2 border rounded-md"
-              style={{
-                backgroundColor: '#D9D9D9',
-                borderColor: '#D9D9D9',
-                color: '#000000',
-              }}
-            />
-          </div>
+          {showForm ? 'Hide Form' : 'Add New Report'}
+        </button>
 
-          <div>
-            <label
-              className="block text-sm font-semibold text-gray-800 mb-2"
-            >
-              Add Location
-            </label>
-            <input
-              ref={inputRef}
-              type="text"
-              placeholder="Add Location"
-              className="w-full px-3 py-2 border rounded-md"
-              style={{
-                backgroundColor: '#D9D9D9',
-                borderColor: '#D9D9D9',
-                color: '#000000',
-                textAlign: 'center',
-              }}
-            />
-          </div>
-          <button
-            type="submit"
-            className="block mx-auto px-6 py-2 rounded-md"
-            style={{
-              backgroundColor: '#008000',
-              color: '#FFFFFF',
-              fontWeight: 'bold',
-              fontSize: '14px',
-            }}
-          >
-            Submit
-          </button>
-        </form>
+        {showForm && (
+          <Card className="mb-4 bg-[#124B4D] rounded-lg shadow-md">
+            <CardContent className="p-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Location Input */}
+                <div>
+                  <label className="block mb-2 font-semibold text-white">Location</label>
+                  <SearchBox 
+                    selectPosition={selectPosition} 
+                    setSelectPosition={setSelectPosition}
+                    className="w-full text-black"
+                  />
+                </div> 
+                
+                {/* Image Input */}
+                <div>
+                  <label className="block mb-2 font-semibold text-white">Image</label>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setImage(e.target.files[0])}
+                      className="w-full px-4 py-2 border border-dashed border-[#3DC9B0] rounded-lg bg-[#0D3B3F] text-white file:text-black file:font-semibold"
+                    />
+                  </div>
+                </div>
+
+                {/* Description Input */}
+                <div>
+                  <label className="block mb-2 font-semibold text-white">Description</label>
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="w-full p-2 border border-[#3DC9B0] rounded-lg bg-[#0D3B3F] text-white"
+                    rows="3"
+                  />
+                </div>
+
+                <button 
+                  type="submit"
+                  className="w-full px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition"
+                >
+                  Submit Report
+                </button>
+              </form>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
-      {/* Map Component */}
-      <div
-        id="map"
-        ref={mapRef}
-        style={{
-          height: '400px',
-          width: '80%',
-          marginTop: '20px',
-          borderRadius: '8px',
-          border: '1px solid #ccc',
-        }}
-      ></div>
+      {/* Map Section */}
+      <div className="w-full h-[400px] border rounded-lg overflow-hidden">
+        <Maps selectPosition={selectPosition} reports={reports} />
+      </div>
+
+      {/* Reports Section */}
+      <div className="w-full">
+        <h2 className="text-xl font-bold mb-4">Saved Reports</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {reports.map((report) => (
+            <Card key={report.id} className="h-full relative bg-[#124B4D] text-white">
+              <CardContent className="p-4">
+                <img 
+                  src={report.image} 
+                  alt="Report" 
+                  className="w-full h-48 object-cover rounded mb-2"
+                />
+                <p className="font-bold">Location: {report.locationName}</p>
+                <p className="mt-2">{report.description}</p>
+                <button
+                  onClick={() => handleDeleteReport(report.id)}
+                  className="absolute top-2 right-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  Delete
+                </button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
+

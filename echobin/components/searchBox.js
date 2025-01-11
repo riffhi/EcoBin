@@ -69,7 +69,8 @@ export default function SearchBox(props) {
                   alignItems: "center",
                   padding: "8px",
                   cursor: "pointer",
-                  borderBottom: "1px solid #ddd"
+                  borderBottom: "1px solid #ddd",
+                  color:"white"
                 }}
                 onClick={() => {
                   setSelectPosition(item);
@@ -91,4 +92,6 @@ export default function SearchBox(props) {
     </div>
   );
 }
+
+
 
