@@ -1,7 +1,10 @@
 import React from "react";
-import { MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import MarkerClusterGroup from 'react-leaflet-cluster';
+import 'leaflet/dist/leaflet.css';
+import 'react-leaflet-cluster/lib/assets/MarkerCluster.css';
+import 'react-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
+import L from 'leaflet';
 
 const icon = L.icon({
   iconUrl: "./placeholder.png",
@@ -9,10 +12,8 @@ const icon = L.icon({
 });
 
 const position = [19.2183, 72.9781];
-// lat: 19.2183, lng: 72.9781
 
 export default function mapComp({ selectPosition, reports }) {
-
   return (
     <MapContainer
       center={position}
@@ -36,26 +37,38 @@ export default function mapComp({ selectPosition, reports }) {
         </Marker>
       )}
 
-      {/* Show saved reports */}
-      {reports.map((report) => (
-        <Marker 
-          key={report.id}
-          position={[report.position.lat, report.position.lon]} 
-          icon={icon}
-        >
-          <Popup>
-            <div className="max-w-xs">
-              <img 
-                src={report.image} 
-                alt="Report"
-                className="w-full h-32 object-cover rounded mb-2" 
-              />
-              <p className="font-bold">Location: {report.locationName}</p>
-              <p>{report.description}</p>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
+      {/* Clustered markers for reports */}
+      <MarkerClusterGroup
+        chunkedLoading
+        iconCreateFunction={(cluster) => {
+          const count = cluster.getChildCount();
+          return L.divIcon({
+            html: `<div class="cluster-marker">${count}</div>`,
+            className: 'custom-marker-cluster',
+            iconSize: L.point(40, 40)
+          });
+        }}
+      >
+        {reports.map((report) => (
+          <Marker 
+            key={report.id}
+            position={[report.position.lat, report.position.lon]} 
+            icon={icon}
+          >
+            <Popup>
+              <div className="max-w-xs">
+                <img 
+                  src={report.image} 
+                  alt="Report"
+                  className="w-full h-32 object-cover rounded mb-2" 
+                />
+                <p className="font-bold">Location: {report.locationName}</p>
+                <p>{report.description}</p>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+      </MarkerClusterGroup>
     </MapContainer>
   );
 }

@@ -88,3 +88,22 @@ html {
     @apply bg-background text-foreground;
   }
 }
+
+.custom-marker-cluster {
+  background: transparent;
+  background-clip: padding-box;
+}
+
+.cluster-marker {
+  width: 40px;
+  height: 40px;
+  background-color: #023838;
+  color: white;
+  border: 3px solid #3DC9B0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+}
