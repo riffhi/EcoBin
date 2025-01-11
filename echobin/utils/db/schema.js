@@ -152,6 +152,13 @@ export const UsersRelations = relations(Users, ({ many }) => ({
     notifications: many(Notifications),
 }));
 
+
+export const Admin = pgTable("admin", {
+    id: serial("id").primaryKey(),
+    email: varchar("email", { length: 255 }).notNull(),
+    name: varchar("name", { length: 255 }).notNull(),
+  });
+
 export const blogsRelations = relations(Blogs, ({ one }) => ({
     author: one(Users, {
         fields: [Blogs.userId],
