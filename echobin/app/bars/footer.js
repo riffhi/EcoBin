@@ -45,7 +45,7 @@ export default function Footer() {
           
           <div className="mt-6 flex justify-end  space-x-6 pr-6">
             <a
-              href="https://www.instagram.com"
+              href="https://www.instagram.com/we.ecobin/"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
@@ -57,7 +57,7 @@ export default function Footer() {
               />
             </a>
             <a
-              href="https://www.github.com"
+              href="https://github.com/CodeCatalyst04"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub"
