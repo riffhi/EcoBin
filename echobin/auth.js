@@ -1,19 +1,6 @@
-// import NextAuth from "next-auth";
-// import Google from "next-auth/providers/google";
-
-// export const { handlers, signIn, signOut, auth } = NextAuth({
-//   providers: [Google],
-// });
-
-
-
-
 import NextAuth from "next-auth";
-import Google from "next-auth/providers/google";
-// import {getUserByEmail, createUser} from './utils/db/actions.js';
+import GoogleProvider from "next-auth/providers/google";
 import { getUserByEmail, createUser } from "@/utils/db/action.js";
-
-
 
 export const {
   handlers,
@@ -21,28 +8,45 @@ export const {
   signOut,
   auth,
 } = NextAuth({
-  providers: [Google],
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+  ],
   callbacks: {
     async signIn({ user }) {
       try {
         console.log("USER", user);
-        // Attempt to get the user by email
+
+        // Admin-specific logic
+        if (user.email === "ecobinwork10@gmail.com") {
+          const existingAdmin = await getUserByEmail(user.email);
+          console.log("Admin user:", existingAdmin);
+
+          if (!existingAdmin) {
+            console.log("Admin does not exist, adding admin to the database");
+            await createUser(user.email, user.name, user.image);
+          }
+
+          // Allow admin login
+          return true;
+        }
+
+        // Regular user logic
         const existingUser = await getUserByEmail(user.email);
-        console.log("existingUser", existingUser);
-        if (
-          existingUser === undefined ||
-          existingUser === null ||
-          !existingUser ||
-          existingUser.length === 0
-        ) {
-          console.log("User does not exist, adding user");
+        console.log("Regular user:", existingUser);
+
+        if (!existingUser) {
+          console.log("User does not exist, adding user to the database");
           await createUser(user.email, user.name, user.image);
         }
-        // Return true to continue the sign-in process
+
+        // Allow user login
         return true;
       } catch (error) {
         console.error("Error in signIn callback:", error);
-        throw new Error("Failed to execute database operations");
+        return false; // Deny login if any error occurs
       }
     },
   },
