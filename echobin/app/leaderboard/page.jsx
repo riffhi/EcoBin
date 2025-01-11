@@ -1,7 +1,6 @@
 'use client';
-import React from "react";
-import { getRanking } from "@/utils/db/action";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
+import { getRanking } from '@/utils/db/action';
 
 export default function Leaderboard() {
   const [rankings, setRankings] = useState([]);
@@ -14,89 +13,95 @@ export default function Leaderboard() {
   useEffect(() => {
     if (isMounted) {
       getRanking().then((data) => {
-        // Sort rankings by points in descending order
-        const sortedRankings = data.sort((a, b) => b.points - a.points);
-        
-        // Add rank to each user
-        const rankedRankings = sortedRankings.map((user, index) => ({
-          ...user,
-          rank: index + 1,
-          level: determineLevel(user.points)
-        }));
+        // Ensure data is an array
+        if (Array.isArray(data)) {
+          // Sort rankings by points in descending order
+          const sortedRankings = data.sort((a, b) => b.points - a.points);
 
-        setRankings(rankedRankings);
+          // Add rank and level to each user
+          const rankedRankings = sortedRankings.map((user, index) => ({
+            ...user,
+            rank: index + 1,
+            level: determineLevel(user.points),
+          }));
+
+          setRankings(rankedRankings);
+        } else {
+          console.error('getRanking did not return an array', data);
+        }
       });
     }
   }, [isMounted]);
 
   // Function to determine user level based on points
   const determineLevel = (points) => {
-    if (points >= 40) return "Gold";
-    if (points >= 20) return "Silver";
-    if (points >= 10) return "Bronze";
-    return "Beginner";
+    if (points >= 40) return 'Gold';
+    if (points >= 20) return 'Silver';
+    if (points >= 10) return 'Bronze';
+    return 'Beginner';
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#023838]">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-[600px]">
-        <h2 className="text-2xl font-bold mb-4 text-center text-[#000000]">Leaderboard</h2>
-        <div className="bg-[#008000] text-white rounded-t-lg p-4 flex items-center justify-between">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#023838] relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10 bg-[url('/path/to/pattern.svg')] bg-cover"></div>
+
+      <div className="relative z-10 p-6 max-w-2xl w-full backdrop-blur-md bg-white/10 rounded-3xl shadow-xl animate-fade-in">
+        <h2 className="text-3xl font-extrabold text-white mb-6 text-center animate-bounce">
+          🏆 Leaderboard 🏆
+        </h2>
+
+        <div className="bg-gradient-to-r from-green-500 to-green-700 text-white rounded-t-lg p-4 flex items-center justify-between shadow-md">
           <div className="flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-6 h-6 mr-2"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8 16l4-4-4-4m8 0l-4 4 4 4"
-              />
-            </svg>
-            <span className="font-semibold text-lg">Top Performers</span>
+            <span className="font-semibold text-lg">Top Performers (Weekly)</span>
           </div>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5 12h14M12 5l7 7-7 7"
-            />
-          </svg>
         </div>
-        <table className="w-full text-left border border-gray-300 mt-4">
+
+        <table className="w-full text-left border-collapse overflow-hidden mt-4 rounded-lg shadow-lg">
           <thead>
-            <tr className="bg-[#F5F5F5]">
-              <th className="py-2 px-4 border-b">RANK</th>
-              <th className="py-2 px-4 border-b">USER</th>
-              <th className="py-2 px-4 border-b">POINTS</th>
-              <th className="py-2 px-4 border-b">LEVEL</th>
+            <tr className="bg-[#FFF9E5] text-[#023838]">
+              <th className="py-3 px-4 border-b border-gray-300">RANK</th>
+              <th className="py-3 px-4 border-b border-gray-300">USER</th>
+              <th className="py-3 px-4 border-b border-gray-300">POINTS</th>
+              <th className="py-3 px-4 border-b border-gray-300">LEVEL</th>
             </tr>
           </thead>
           <tbody>
-            {rankings.map((performer) => (
-              <tr key={performer.id} className="hover:bg-[#F9F9F9]">
-                <td className="py-2 px-4 border-b">{performer.rank}</td>
-                <td className="py-2 px-4 border-b flex items-center">
-                  
-                  {performer.name}
+            {rankings.length > 0 ? (
+              rankings.map((performer, index) => (
+                <tr
+                  key={performer.id}
+                  className={`${
+                    index === 0
+                      ? 'bg-yellow-200'
+                      : index === 1
+                      ? 'bg-gray-200'
+                      : index === 2
+                      ? 'bg-[#cd7f32]'
+                      : 'bg-white'
+                  } hover:bg-green-100`}
+                >
+                  <td className="py-3 px-4 border-b border-gray-300 text-center font-bold">
+                    {performer.rank}
+                  </td>
+                  <td className="py-3 px-4 border-b border-gray-300">{performer.name}</td>
+                  <td className="py-3 px-4 border-b border-gray-300">{performer.points}</td>
+                  <td className="py-3 px-4 border-b border-gray-300">{performer.level}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="py-3 px-4 text-center text-gray-500">
+                  No data available
                 </td>
-                <td className="py-2 px-4 border-b">{performer.points}</td>
-                <td className="py-2 px-4 border-b">{performer.level}</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
+
+        <div className="flex justify-center mt-6">
+          {/* Future: Add a button here if needed */}
+        </div>
       </div>
     </div>
   );
